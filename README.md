@@ -42,6 +42,55 @@ Two real-time information panels:
 
 ---
 
+## 🚀 Getting Started
+
+Follow the steps below to run the **Parking Agent** locally.
+
+---
+
+### 📋 Prerequisites
+
+Make sure you have the following installed:
+
+- **Node.js** (recommended: LTS version)
+- **npm** (comes with Node.js)
+
+---
+
+### 📦 Install Dependencies
+
+From the **project root**:
+
+```bash
+npm install
+```
+
+### 🖥️ Run the Backend Server
+
+Continue in opened terminal and run:
+
+1. cd apps/server
+
+2. npm install
+
+3. npm run dev
+
+The backend server will start on: http://localhost:3001
+
+### 🎨 Run the Frontend UI
+
+Open a second terminal and run:
+
+1. cd apps/ui
+
+2. npm install
+
+3. npm run dev
+
+The UI will be available at: http://localhost:5173
+
+---
+
 ## 🎮 UI Controls (Actions)
 
 The UI exposes the following **controls**:
@@ -156,54 +205,6 @@ parking-agent/
 └── tsconfig.base.json
 
 ```
-
-## 🚀 Getting Started
-
-Follow the steps below to run the **Parking Agent** locally.
-
----
-
-### 📋 Prerequisites
-
-Make sure you have the following installed:
-
-- **Node.js** (recommended: LTS version)
-- **npm** (comes with Node.js)
-
----
-
-### 📦 Install Dependencies
-
-From the **project root**:
-
-```bash
-npm install
-```
-
-### 🖥️ Run the Backend Server
-
-Continue in opened terminal and run:
-
-1. cd apps/server
-
-2. npm install
-
-3. npm run dev
-
-The backend server will start on: http://localhost:3001
-
-### 🎨 Run the Frontend UI
-
-Open a second terminal and run:
-
-1. cd apps/ui
-
-2. npm install
-
-3. npm run dev
-
-The UI will be available at: http://localhost:5173
-
 
 ## 📦 State Persistence
 

@@ -65,6 +65,8 @@ From the **project root**:
 npm install
 ```
 
+---
+
 ### 🖥️ Run the Backend Server
 
 Continue in opened terminal and run:
@@ -76,6 +78,8 @@ Continue in opened terminal and run:
 3. npm run dev
 
 The backend server will start on: http://localhost:3001
+
+---
 
 ### 🎨 Run the Frontend UI
 
@@ -137,7 +141,6 @@ Displays **overall learning statistics**:
 ---
 
 ## 🧠 Learning Loop (Concept)
-
 
 
 The agent follows a classic RL loop:
@@ -206,6 +209,8 @@ parking-agent/
 
 ```
 
+---
+
 ## 📦 State Persistence
 
 The agent’s learned knowledge can be saved and restored:
@@ -226,6 +231,8 @@ experimenting with different parameters,
 
 comparing learning progress.
 
+---
+
 ## 💡 Idea Discussion
 
 The initial idea was to build a system that demonstrates more than a simple
@@ -245,6 +252,8 @@ The final choice was a reinforcement learning agent that:
 
 This makes the system a true intelligent agent rather than an analytical tool.
 
+---
+
 ## 🧠 Agent Type
 
 The Parking Agent is a combination of:
@@ -258,6 +267,8 @@ The Parking Agent is a combination of:
 
 This combination was chosen because the task requires both
 goal optimization and adaptation through interaction with the environment.
+
+---
 
 ## 🔁 Agent Cycle: Sense → Think → Act → Learn
 
@@ -277,6 +288,8 @@ goal optimization and adaptation through interaction with the environment.
   After receiving a reward, the agent updates its Q-table,
   improving future decisions based on experience.
 
+---
+
 ## 🔮 Possible Extensions
 
 Potential extensions considered for this project include:
@@ -288,6 +301,39 @@ Potential extensions considered for this project include:
 
 These ideas were discussed but not fully implemented
 due to project scope and time constraints.
+
+---
+
+## 🤖 Use of LLMs
+
+Large Language Models (LLMs) were used as a thinking partner during the project.
+
+They were used for:
+- discussing and refining the initial agent idea,
+- comparing different types of agents,
+- evaluating whether the system qualifies as an intelligent agent,
+- reviewing architecture decisions and identifying improvements,
+- refining the UI and visualization quality.
+
+Multiple iterations were performed instead of accepting the first solution,
+allowing critical evaluation and gradual refinement of the design.
+
+---
+
+## 🏗️ Architecture Notes
+
+Although the architecture differs from the SpamAgent example,
+the same core principles are respected:
+
+- The UI acts as a thin host and visualization layer.
+- The agent logic is executed in discrete ticks.
+- Decision-making and learning are not performed in the UI.
+- The environment and learning logic are clearly separated.
+
+The architecture was adapted to better suit
+a reinforcement learning simulation environment.
+
+---
 
 ## 🎓 Educational Value
 
@@ -307,6 +353,8 @@ Separation of concerns (UI, server, agent)
 
 Real-time visualization of agent behavior and learning progress
 
+---
+
 ## ⚠️ Disclaimer
 
 This project is intended for educational and experimental purposes only.
@@ -316,6 +364,8 @@ It is not optimized for production use
 Environment and parameters are simplified for learning clarity
 
 Behavior may vary depending on configuration and randomness
+
+---
 
 ## 🙏 Acknowledgements
 

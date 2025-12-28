@@ -154,7 +154,7 @@ parking-agent/
 
 ```
 
-🚀 Getting Started
+## 🚀 Getting Started
 Prerequisites
 
 Node.js (recommended: LTS)

@@ -148,6 +148,9 @@ parking-agent/
 │           └── styles.css
 ├── packages/
 │   ├── ai-agents-core/
+│   │       ├── dist/
+│   │       ├── src/
+│   │       
 │   └── parking-agent/
 ├── package.json
 └── tsconfig.base.json
@@ -181,18 +184,23 @@ npm install
 
 Continue in opened terminal and run:
 
-cd apps/server
-npm install
-npm run dev
+- cd apps/server
+
+- npm install
+
+- npm run dev
+
 [The backend server will start on:](http://localhost:3001)
 
 ### 🎨 Run the Frontend UI
 
 Open a second terminal and run:
 
-cd apps/ui
-npm install
-npm run dev
+- cd apps/ui
+
+- npm install
+
+- npm run dev
 
 The UI will be available at: http://localhost:5173
 

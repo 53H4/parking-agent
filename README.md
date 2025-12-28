@@ -320,21 +320,6 @@ allowing critical evaluation and gradual refinement of the design.
 
 ---
 
-## 🏗️ Architecture Notes
-
-Although the architecture differs from the SpamAgent example,
-the same core principles are respected:
-
-- The UI acts as a thin host and visualization layer.
-- The agent logic is executed in discrete ticks.
-- Decision-making and learning are not performed in the UI.
-- The environment and learning logic are clearly separated.
-
-The architecture was adapted to better suit
-a reinforcement learning simulation environment.
-
----
-
 ## 🎓 Educational Value
 
 This project demonstrates key concepts from Artificial Intelligence and Reinforcement Learning, including:

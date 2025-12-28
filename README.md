@@ -184,23 +184,23 @@ npm install
 
 Continue in opened terminal and run:
 
-- cd apps/server
+1. cd apps/server
 
-- npm install
+2. npm install
 
-- npm run dev
+3. npm run dev
 
-[The backend server will start on:](http://localhost:3001)
+The backend server will start on: http://localhost:3001
 
 ### 🎨 Run the Frontend UI
 
 Open a second terminal and run:
 
-- cd apps/ui
+1. cd apps/ui
 
-- npm install
+2. npm install
 
-- npm run dev
+3. npm run dev
 
 The UI will be available at: http://localhost:5173
 

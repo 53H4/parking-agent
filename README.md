@@ -215,21 +215,21 @@ parking-agent/
 
 The agent’s learned knowledge can be saved and restored:
 
-Agent knowledge is stored as a JSON snapshot
+ - Agent knowledge is stored as a JSON snapshot
 
-The Export button saves the current learning state
+ - The Export button saves the current learning state
 
-The Load button restores a previously exported state
+ - The Load button restores a previously exported state
 
-The server keeps the currently active agent state in memory
+ - The server keeps the currently active agent state in memory
 
 This allows:
 
-continuing learning across sessions,
+ - continuing learning across sessions,
 
-experimenting with different parameters,
+ - experimenting with different parameters,
 
-comparing learning progress.
+ - comparing learning progress.
 
 ---
 
@@ -339,39 +339,39 @@ a reinforcement learning simulation environment.
 
 This project demonstrates key concepts from Artificial Intelligence and Reinforcement Learning, including:
 
-Reinforcement Learning fundamentals
+ - Reinforcement Learning fundamentals
 
-Q-Learning algorithm in practice
+ - Q-Learning algorithm in practice
 
-Exploration vs. exploitation trade-offs
+ - Exploration vs. exploitation trade-offs
 
-Reward-based decision making
+ - Reward-based decision making
 
-Clean AI-agent architecture
+ - Clean AI-agent architecture
 
-Separation of concerns (UI, server, agent)
+ - Separation of concerns (UI, server, agent)
 
-Real-time visualization of agent behavior and learning progress
+ - Real-time visualization of agent behavior and learning progress
 
 ---
 
 ## ⚠️ Disclaimer
 
-This project is intended for educational and experimental purposes only.
+ - This project is intended for educational and experimental purposes only.
 
-It is not optimized for production use
+ - It is not optimized for production use
 
-Environment and parameters are simplified for learning clarity
+ - Environment and parameters are simplified for learning clarity
 
-Behavior may vary depending on configuration and randomness
+ - Behavior may vary depending on configuration and randomness
 
 ---
 
 ## 🙏 Acknowledgements
 
-Built as a university AI-agent project
+ - Built as a university AI-agent project
 
-Uses AI-assisted development tools (LLMs) for faster iteration and experimentation
+ - Uses AI-assisted development tools (LLMs) for faster iteration and experimentation
 
-Inspired by classic reinforcement learning environments and grid-based simulations
+ - Inspired by classic reinforcement learning environments and grid-based simulations
 

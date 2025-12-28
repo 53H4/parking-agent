@@ -1,0 +1,20 @@
+{
+  "name": "apps-server",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts"
+  },
+  "dependencies": {
+    "@pkg/parking-agent": "file:../../packages/parking-agent",
+    "express": "^4.22.1",
+    "ws": "^8.18.3"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^20.19.27",
+    "@types/ws": "^8.18.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3"
+  }
+}

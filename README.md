@@ -155,72 +155,101 @@ parking-agent/
 ```
 
 ## 🚀 Getting Started
-Prerequisites
 
-Node.js (recommended: LTS)
+Follow the steps below to run the **Parking Agent** locally.
 
-npm
+---
 
-Install Dependencies
+### 📋 Prerequisites
 
-From the project root:
+Make sure you have the following installed:
+
+- **Node.js** (recommended: LTS version)
+- **npm** (comes with Node.js)
+
+---
+
+### 📦 Install Dependencies
+
+From the **project root**:
+
+```bash
 npm install
+```
 
-Run Server:
+### 🖥️ Run the Backend Server
+
+Continue in opened terminal and run:
+
 cd apps/server
 npm install
 npm run dev
+[The backend server will start on:](http://localhost:3001)
 
-Run UI:
+### 🎨 Run the Frontend UI
+
+Open a second terminal and run:
+
 cd apps/ui
 npm install
 npm run dev
 
-
-Open the UI in your browser:
-http://localhost:5173
+The UI will be available at: http://localhost:5173
 
 
-📦 State Persistence
+## 📦 State Persistence
 
-Agent knowledge is stored as a .json snapshot.
+The agent’s learned knowledge can be saved and restored:
 
-Exported files can be reloaded later to continue learning.
+Agent knowledge is stored as a JSON snapshot
 
-Server keeps the currently active agent state.
+The Export button saves the current learning state
 
-🎓 Educational Value
+The Load button restores a previously exported state
 
-This project demonstrates:
+The server keeps the currently active agent state in memory
+
+This allows:
+
+continuing learning across sessions,
+
+experimenting with different parameters,
+
+comparing learning progress.
+
+## 🎓 Educational Value
+
+This project demonstrates key concepts from Artificial Intelligence and Reinforcement Learning, including:
 
 Reinforcement Learning fundamentals
 
 Q-Learning algorithm in practice
 
-Exploration vs exploitation trade-offs
+Exploration vs. exploitation trade-offs
+
+Reward-based decision making
 
 Clean AI-agent architecture
 
-Separation of UI, server, and agent logic
+Separation of concerns (UI, server, agent)
 
-Real-time visualization of learning behavior
+Real-time visualization of agent behavior and learning progress
 
-⚠️ Disclaimer
+## ⚠️ Disclaimer
 
 This project is intended for educational and experimental purposes only.
-It is not optimized for production use.
 
-🙏 Acknowledgements
+It is not optimized for production use
+
+Environment and parameters are simplified for learning clarity
+
+Behavior may vary depending on configuration and randomness
+
+## 🙏 Acknowledgements
 
 Built as a university AI-agent project
 
-Uses AI-assisted development tools for faster iteration
+Uses AI-assisted development tools (LLMs) for faster iteration and experimentation
 
-Inspired by classic reinforcement learning environments
-
-
-
-
-
-
+Inspired by classic reinforcement learning environments and grid-based simulations
 

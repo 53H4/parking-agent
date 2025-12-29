@@ -77,8 +77,6 @@ Continue in opened terminal and run:
 
 3. npm run dev
 
-The backend server will start on: http://localhost:3001
-
 ---
 
 ### 🎨 Run the Frontend UI

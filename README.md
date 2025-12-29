@@ -189,6 +189,7 @@ parking-agent/
 │   ├── server/                # Node.js + TS backend (kontrola/persistencija)
 │   └── ui/                    # React + Vite UI (vizualizacija)
 │
+├── data/                      # Snimljeni AI model (auto-loaded sa preko 30000 spizoda)
 ├── packages/                  # Agent paketi
 │   ├── ai-agents-core/        # zajednički tipovi/utili (core)
 │   │   ├── dist/

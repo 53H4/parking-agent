@@ -186,26 +186,32 @@ This separation ensures:
 ```txt
 parking-agent/
 ├── apps/
-│   ├── server/
-│   │   ├── src/
-│   │   │   └── index.ts
-│   │   └── data/
-│   │       └── agent_state.json
-│   └── ui/
-│       ├── index.html
-│       ├── vite.config.ts
+│   ├── server/                # Node.js + TS backend (kontrola/persistencija)
+│   └── ui/                    # React + Vite UI (vizualizacija)
+│
+├── packages/                  # Agent paketi
+│   ├── ai-agents-core/        # zajednički tipovi/utili (core)
+│   │   ├── dist/
+│   │   └── src/
+│   │
+│   └── parking-agent/         # RL agent + okruženje + Q-table
+│       ├── dist/
+│       │   ├── application/
+│       │   ├── domain/
+│       │   ├── infrastructure/
+│       │   ├── index.js
+│       │   └── index.d.ts
+│       │
 │       └── src/
-│           ├── App.tsx
-│           ├── main.tsx
-│           └── styles.css
-├── packages/
-│   ├── ai-agents-core/
-│   │       ├── dist/
-│   │       ├── src/
-│   │       
-│   └── parking-agent/
+│           ├── application/
+│           ├── domain/
+│           ├── infrastructure/
+│           └── index.ts
+│
+├── docs/                      # dokumentacija (ovaj fajl)
 ├── package.json
 └── tsconfig.base.json
+
 
 ```
 

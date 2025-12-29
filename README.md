@@ -116,7 +116,7 @@ The UI exposes the following **controls**:
   Exports the **current learned state** of the agent to a `.json` file.
 
 - 📥 **Load**  
-  Loads a previously exported `.json` file and continues learning from that state.
+  Loads a file and continues learning from that state.
 
 ---
 
@@ -224,7 +224,7 @@ The agent’s learned knowledge can be saved and restored:
 
  - The Export button saves the current learning state
 
- - The Load button restores a previously exported state
+ - The Load button enables us to choose state of our agent and continue to learn from that point
 
  - The server keeps the currently active agent state in memory
 

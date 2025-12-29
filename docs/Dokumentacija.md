@@ -35,7 +35,17 @@ Parking-lot je predstavljen kao **grid** (mreža polja). U mreži postoje:
 - **parkirana vozila** (prepreke),
 - **put/vozna traka** (dozvoljena polja kretanja),
 - **ciljno parking mjesto** (GOAL).
-Agent se pomjera diskretnim akcijama (**UP/DOWN/LEFT/RIGHT**) i dobija nagrade/kazne.
+Agent se pomjera diskretnim akcijama (UP/DOWN/LEFT/RIGHT) i dobija nagrade/kazne. Kazne dobija ako se sudari sa drugim automobilom a nagradu ukoliko se uspješno parkira na predefinirano parking mjesto. Zbog kompleksnosti I da bi agent imao više prostora da uči odlučio sam se da ciljno parking mjesto bude na kraju parkinga tako da bi agent morao što više da se potrudi I što više pokušaja da ima da bi uspješno naučio kako da se parkira na to predefinirano mjesto.
+
+Ključna funkcionalnost Parking Agenta je sposobnost samostalnog učenja optimalnog ponašanja u dinamičnom okruženju kroz iterativni agentički ciklus (Sense → Think → Act → Learn), s ciljem da dosegne ciljano parking mjesto bez sudara i u što manjem broju koraka.
+Agent ne koristi unaprijed definisana pravila kretanja niti statičke putanje. Umjesto toga, on kroz vlastito iskustvo gradi politiku ponašanja koristeći Q-Learning, gdje svaka akcija utiče na buduće odluke.
+Kroz više epizoda, agent:
+-	opaža trenutno stanje parking okruženja (pozicija, prepreke, cilj),
+-	donosi odluku o narednom potezu,
+-	izvršava akciju u okruženju,
+-	uči iz posljedica svojih odluka putem sistema nagrada i kazni.
+Ovakav pristup omogućava agentu da adaptira ponašanje kroz vrijeme, poboljšava uspješnost parkiranja i generalizuje naučeno znanje na nove epizode, čime sistem predstavlja istinskog inteligentnog softverskog agenta, a ne klasičnu analitičku ili determinističku aplikaciju.
+
 
 ### Pokretanje (lokalno)
 U root folderu:
@@ -64,14 +74,32 @@ Backend se pokreće na `http://localhost:3001`, a UI na `http://localhost:5173`.
 ```txt
 parking-agent/
 ├── apps/
-│   ├── server/        # Node.js + TS backend (kontrola/persistencija)
-│   └── ui/            # React + Vite UI (vizualizacija)
-├── packages/
-│   ├── ai-agents-core/ # zajednički tipovi/utili (core)
-│   └── parking-agent/  # RL agent + okruženje + Q-table
-├── docs/               # dokumentacija (ovaj fajl)
+│   ├── server/         # Node.js + TS backend (kontrola/persistencija)
+│   └── ui/               # React + Vite UI (vizualizacija)
+│
+├── packages/         # Agent paketi
+│   ├── ai-agents-core/        # zajednički tipovi/utili (core)
+│   │   ├── dist/
+│   │   └── src/
+│   │
+│   └── parking-agent/         # RL agent + okruženje + Q-table
+│       ├── dist/
+│       │   ├── application/
+│       │   ├── domain/
+│       │   ├── infrastructure/
+│       │   ├── index.js
+│       │   └── index.d.ts
+│       │
+│       └── src/
+│           ├── application/
+│           ├── domain/
+│           ├── infrastructure/
+│           └── index.ts
+│
+├── docs/              # dokumentacija (ovaj fajl)
 ├── package.json
 └── tsconfig.base.json
+
 ```
 
 
@@ -124,29 +152,29 @@ UI renderuje grid parking-lota i pruža kontrole (Start, Reset Episode, Reset Al
 
 > Napomena: Ispod su **ključni promptovi** (3–4 najbitnija) koji reprezentuju tok razvoja i način komunikacije sa AI asistentom.
 
-### Prompt 1: Generisanje osnovne monorepo aplikacije (UI + Server + Q-Learning agent)
+### Prompt 1: Generisanje osnovne monorepo aplikacije (UI + Server + Q-Learning agent) – Dakle nakon što sam obavio razgovor, razmijenio više poruka I utvrdio šta ću raditi kao AI agenta za naš predmet moj prvi prompt je bio:
 **Prompt:**
-> Napravi TS monorepo (apps/ui + apps/server + packages/parking-agent) gdje agent uči Q-learningom u grid parking lotu. UI samo vizualizuje.
+> Napravi TS monorepo (apps/ui + apps/server + packages/parking-agent) gdje agent uči Q-learningom u grid parking lotu. UI samo vizualizuje. U prethodnim porukama sam ti jasno i koncizno objasnio koji su kriteriji koje ovaj projekat mora zadovoljiti tako da želim da mi generiraš osnovnu strukturu projekta + copy/paste kodove za sve fajlove. 
 
-**Odgovor (sažetak):** Predložena struktura, osnovni env + qtable + agent, server API za stanje i UI za prikaz.
+**Odgovor (sažetak):** Predložena struktura, osnovni env + qtable + agent, server API za stanje i UI za prikaz. – Nakon što mi je ai sve generirao, sve fajlove sam ručno kreirao i uradio copy/paste kod. Nakon što sam pokrenuo app sve je uredno radilo međutim to nije ličilo ni na šta. Aplikacija je bila vrlo vrlo ružnog UI izgleda te mi se činilo da agent nikada neće uspjeti parkirati automobile na predefinisano mjesto. Stoga sam imao mnogo iteracija I razmjena poruka gdje sam nakon nekog vremena uspio riješiti oba problema. Uspio sam popraviti UI izgled tako da aplikacija izgleda vrlo pristojno + agent je zaista krenuo učiti I sada već nakon nekih 700 epizoda uspjeva uspješno parkirati auto u predefinirano parking mjesto. Sve sam radio ručno jer sam se odlučio za ovaj put koristiti ChatGPT plus verziju (ne cursor ili nešto drugo) te sam zbog toga kreiranje inicijalnih fajlova I svaku kasniju izmjenu morao raditi ručno
 
 ### Prompt 2: Start/Stop + Reset Episode/All + Tick delay
 **Prompt:**
 > Dodaj Start/Stop loop, Reset Episode (bez brisanja Q-table), Reset All (brisanje svega) i tick delay u ms.
 
-**Odgovor (sažetak):** Runner na serveru drži stanje i interval; reset metode i podešavanje delay-a.
+**Odgovor (sažetak):** Runner na serveru drži stanje i interval; reset metode i podešavanje delay-a. – Nakon što je aplikacija krenula raditi ono što sam od nje očekivao na red je došlo dodavanje nekih novih funkcionalnosti. Prve na redu su bile Start/stop system I reset episode funkcionalnosti. 
 
 ### Prompt 3: Export / Load (persistencija)
 **Prompt:**
 > Dodaj Export/Load da se Q-table i statistika sačuvaju u JSON i kasnije učitaju.
 
-**Odgovor (sažetak):** Serializacija + server endpointi + UI dugmad.
+**Odgovor (sažetak):** Serializacija + server endpointi + UI dugmad. – Nakon što sam napravio osnovne funkcionalnosti za svog ai agenta onda sam odlučio da bi bilo super imati funkcionalnosti kao što su Export/Load. Tako da sa jednim klikom mogu exportovati trenutno znanje mog agenta ili pomoću Load da učitam već naučeno znanje preko .json fajla I tako testirati da li sve uredno radi. 
 
 ### Prompt 4: UI dorade + info paneli
 **Prompt:**
 > Uljepšaj UI i dodaj Live Tick i Learning Statistics panele, ali learning ostaje u packages/server sloju.
 
-**Odgovor (sažetak):** Dashboard layout + prikaz akcije/rewarda/statistike kroz server state.
+**Odgovor (sažetak):** Dashboard layout + prikaz akcije/rewarda/statistike kroz server state. – Na samom kraju nakon što sam doveo agenta u red odlučio sam da finaliziram svoj UI tako što ću mu dodati info panele sa desne strane tako da u svakom trenutku korisnik može live pratiti određene parameter kao što su: Last action, Last reward, Reason, Episode i Step. Ispod live panela sam se odlučio da također dodam I Learning panel tako da u svakom trenutku korisnik može vidjeti Koliko je ukupno epizoda u trenutno učitanom .json fajlu to jeste q-tabeli I statistici. 
 
 
 ---
@@ -1519,4 +1547,20 @@ export abstract class SoftwareAgent<TPercept, TAction, TResult, TExperience> {
 
 ---
 ## Zaključak
-Parking Agent demonstrira learning agenta (Q-learning) sa jasnom separacijom UI/Server/Agent logike, uz mogućnost export/load stanja.
+Parking Agent predstavlja primjer inteligentnog softverskog agenta koji ispunjava ključne teorijske i tehničke zahtjeve savremenih agentičkih sistema. Kroz implementaciju learning agenta zasnovanog na Q-learning algoritmu, projekat demonstrira kako se autonomno ponašanje može razvijati kroz iterativni ciklus Sense → Think → Act → Learn, gdje svaka odluka utiče na buduće stanje znanja agenta.
+
+Za razliku od klasičnih aplikacija koje funkcionišu po principu ulaz → izlaz, Parking Agent egzistira u simuliranom okruženju kroz vrijeme, kontinuirano opaža stanje okoline, donosi odluke, izvršava akcije i uči iz posljedica svog ponašanja. Time je jasno ispunjen osnovni kriterij da sistem bude agent, a ne samo analitička ili vizualna aplikacija.
+
+Posebna pažnja posvećena je arhitektonskoj separaciji odgovornosti, gdje su:
+
+-	korisnički interfejs ograničen na vizualizaciju i kontrolu izvršavanja,
+-	serverski sloj zadužen za orkestraciju, stanje i perzistenciju,
+-	agentička logika (odlučivanje i učenje) izolovana u zasebnom modulu.
+
+Ovakav pristup osigurava čistu implementaciju agentičkog ciklusa, olakšava testiranje i omogućava buduća proširenja bez narušavanja postojećeg dizajna.
+
+Dodatna vrijednost projekta ogleda se u mogućnosti exportovanja i ponovnog učitavanja naučenog stanja, čime se agentovo znanje tretira kao trajni artefakt, a ne prolazni rezultat izvršavanja. Time se omogućava analiza napretka učenja, poređenje različitih konfiguracija i nastavak učenja iz prethodnih epizoda.
+
+Korištenje LLM-ova kao alata za razmišljanje, analizu i iterativni razvoj nije zamjena za dizajnerske odluke, već sredstvo za njihovo kritičko preispitivanje i poboljšanje. Projekat je razvijan kroz više iteracija, uz diskusiju ideje, razradu arhitekture, refaktorisanje i provjeru usklađenosti sa agentičkim principima.
+
+U konačnici, Parking Agent ne demonstrira samo tehničku primjenu reinforcement learninga, već i ispravan proces dizajna inteligentnog agenta, u kojem su teorija, arhitektura i implementacija usklađeni u jedinstvenu cjelinu. Kao takav, projekat predstavlja solidnu osnovu za dalja istraživanja i proširenja u domenu autonomnih i kontekstno svjesnih softverskih agenata.

@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#e8e8e8" stroke-width="2"/>
+    </pattern>
+    <linearGradient id="asphalt" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2b2f35"/>
+      <stop offset="1" stop-color="#22262b"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="0" y="0" width="800" height="800" fill="url(#asphalt)"/>
+  <rect x="60" y="60" width="680" height="680" fill="#f7f7f7" rx="28"/>
+  <rect x="60" y="60" width="680" height="680" fill="url(#grid)" rx="28"/>
+
+  <!-- subtle border -->
+  <rect x="60" y="60" width="680" height="680" fill="none" stroke="#111" stroke-opacity="0.25" stroke-width="18" rx="28"/>
+
+  <!-- painted parking lines (decorative) -->
+  <g stroke="#ffffff" stroke-opacity="0.55" stroke-width="6" stroke-linecap="round">
+    <path d="M120 180 L680 180"/>
+    <path d="M120 620 L680 620"/>
+  </g>
+  <g stroke="#ffffff" stroke-opacity="0.45" stroke-width="4">
+    <path d="M170 180 L170 300"/>
+    <path d="M250 180 L250 300"/>
+    <path d="M330 180 L330 300"/>
+    <path d="M410 180 L410 300"/>
+    <path d="M490 180 L490 300"/>
+    <path d="M570 180 L570 300"/>
+
+    <path d="M170 500 L170 620"/>
+    <path d="M250 500 L250 620"/>
+    <path d="M330 500 L330 620"/>
+    <path d="M410 500 L410 620"/>
+    <path d="M490 500 L490 620"/>
+    <path d="M570 500 L570 620"/>
+  </g>
+</svg>

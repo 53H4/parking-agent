@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2f80ed"/>
+      <stop offset="1" stop-color="#1b5bb3"/>
+    </linearGradient>
+  </defs>
+  <!-- This icon is "facing up". Rotate it in canvas for other directions. -->
+  <g>
+    <rect x="36" y="16" width="56" height="96" rx="18" fill="url(#body)"/>
+    <rect x="44" y="26" width="40" height="26" rx="10" fill="#cfe7ff" opacity="0.9"/>
+    <rect x="44" y="76" width="40" height="20" rx="10" fill="#cfe7ff" opacity="0.6"/>
+
+    <!-- wheels -->
+    <rect x="28" y="30" width="10" height="20" rx="5" fill="#111" opacity="0.9"/>
+    <rect x="90" y="30" width="10" height="20" rx="5" fill="#111" opacity="0.9"/>
+    <rect x="28" y="78" width="10" height="20" rx="5" fill="#111" opacity="0.9"/>
+    <rect x="90" y="78" width="10" height="20" rx="5" fill="#111" opacity="0.9"/>
+
+    <!-- direction chevron -->
+    <path d="M64 12 L52 26 H76 Z" fill="#ffffff" opacity="0.9"/>
+  </g>
+</svg>

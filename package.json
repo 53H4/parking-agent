@@ -1,0 +1,14 @@
+{
+  "name": "parking-agent-monorepo",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "npm run build -ws",
+    "build:pkgs": "npm run build -w packages/ai-agents-core && npm run build -w packages/parking-agent",
+    "dev": "npm run dev -w apps/server",
+    "dev:ui": "npm run dev -w apps/ui"
+  }
+}

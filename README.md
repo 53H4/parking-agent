@@ -1,13 +1,11 @@
 # 🚗 Parking Agent
 
-**Parking Agent** is an educational AI project that demonstrates a **reinforcement learning agent (Q-Learning)** operating in a simplified parking-lot environment.
+**Parking Agent** is an educational AI project that demonstrates a **reinforcement learning agent (Q-Learning)** operating in a simplified parking-lot environment, alongside an integrated classification pipeline that predicts the outcome of each episode.
 
 The project is implemented as a **TypeScript monorepo** with a clear separation between:
 - AI logic (agent & learning),
 - backend server (state persistence & control),
 - frontend UI (visualization & interaction).
-
-> ⚠️ Note: This project was developed with **AI-assisted tooling (LLMs)** for learning and experimentation purposes.
 
 ---
 
@@ -18,7 +16,7 @@ The goal of the agent is to **learn how to reach a selected parking spot** by na
 - a driving lane (road),
 - a target parking position.
 
-The agent improves its behavior over time using **Q-Learning**, based on rewards and penalties.
+The agent improves its behavior over time using **Q-Learning**, based on rewards and penalties. Reaching the target cell ends the episode immediately — the agent parks and stays there until the next episode starts.
 
 ---
 
@@ -28,17 +26,26 @@ The agent improves its behavior over time using **Q-Learning**, based on rewards
 - Q-Learning based reinforcement learning agent
 - Discrete environment (grid-based parking lot)
 - Exploration vs exploitation (epsilon-greedy strategy)
+- Domain randomization: obstacle/parking density varies per episode, so outcomes depend on both map difficulty and agent skill
 - Persistent learning state (export / load)
+
+### 📊 Integrated ML Analysis
+- Each episode is logged as one row of a growing CSV dataset
+- On-demand classification report comparing **Random Forest**, **Logistic Regression**, and **Gradient Boosting**
+- **5-fold stratified cross-validation** for all three models (mean ± standard deviation per metric)
+- Feature importance, ROC curves, confusion matrices, correlation analysis
+- One-click Word report generation
 
 ### 🖥️ User Interface
 - Real-time parking visualization
 - Car icons, road, parking slots, and target spot
-- Clean, modern dashboard UI
+- Grouped toolbar (simulation / data / analysis), with destructive actions visually marked
+- Clean, modern dashboard UI (Bosnian labels)
 
 ### 🧠 Live Monitoring
 Two real-time information panels:
-- **Live Tick**
-- **Learning Statistics**
+- **Trenutna aktivnost** (Live Tick) — last action, last reward, outcome, episode, step
+- **Učenje** (Learning) — total episodes, success rate, current epsilon
 
 ---
 
@@ -46,16 +53,11 @@ Two real-time information panels:
 
 Follow the steps below to run the **Parking Agent** locally.
 
----
-
 ### 📋 Prerequisites
-
-Make sure you have the following installed:
 
 - **Node.js** (recommended: LTS version)
 - **npm** (comes with Node.js)
-
----
+- **Python 3** with `pandas`, `scikit-learn`, `matplotlib`, `seaborn`, and optionally `python-docx` (for the ML report)
 
 ### 📦 Install Dependencies
 
@@ -65,29 +67,23 @@ From the **project root**:
 npm install
 ```
 
----
-
 ### 🖥️ Run the Backend Server
 
-Continue in opened terminal and run:
-
-1. cd apps/server
-
-2. npm install
-
-3. npm run dev
-
----
+```bash
+cd apps/server
+npm install
+npm run dev
+```
 
 ### 🎨 Run the Frontend UI
 
-Open a second terminal and run:
+Open a second terminal:
 
-1. cd apps/ui
-
-2. npm install
-
-3. npm run dev
+```bash
+cd apps/ui
+npm install
+npm run dev
+```
 
 The UI will be available at: http://localhost:5173
 
@@ -95,49 +91,25 @@ The UI will be available at: http://localhost:5173
 
 ## 🎮 UI Controls (Actions)
 
-The UI exposes the following **controls**:
-
-- ▶️ **Start**  
-  Starts the agent learning / running loop.
-
-- 🔁 **Reset Episode**  
-  Resets only the **current episode** (agent position),  
-  keeping the learned knowledge.
-
-- ♻️ **Reset All**  
-  Fully resets the agent:
-  - clears learned Q-table,
-  - starts learning from scratch.
-
-- ⏱️ **Tick delay (ms)**  
-  Textbox to control how fast the agent performs steps (milliseconds per tick).
-
-- 📤 **Export**  
-  Saves the current live session (Q-table **+** its matching CSV dataset **+**
-  ML report, if one was generated) as a permanent **checkpoint** folder under
-  `apps/server/data/<episodes>_episodes/`, and immediately offers a `.zip`
-  download of that same folder.
-
-- 📥 **Load**  
-  Shows a list of saved checkpoints (episode count, row count, date). Clicking
-  one copies its json+csv+report back into the live working folder and
-  continues learning from exactly that point — dataset and agent are always
-  loaded **together**, so they can never end up mismatched.
+- ▶️ **Start** — starts the agent's learning/running loop.
+- 🔁 **Reset Episode** — resets only the **current episode** (agent position), keeping the learned knowledge.
+- ♻️ **Reset All** — fully resets the agent (clears the Q-table, starts learning from scratch). Before clearing, an automatic timestamped safety backup of `_live/` is written to `apps/server/data/_tmp/backup_<timestamp>/` (the 5 most recent backups are kept). This is a safety net, not a checkpoint — it does not appear in the Load list.
+- ⏱️ **Tick delay (ms)** — controls how fast the agent performs steps.
+- 📤 **Export** — saves the current live session (`agent_state.json` + `dataset.csv`) as a permanent **checkpoint** folder under `apps/server/data/<episodes>_episodes/`, and offers a `.zip` download of that folder. The ML report is intentionally **not** included in checkpoints (see [State Persistence](#-state-persistence--checkpoints-json--csv-together) below). Export refuses to overwrite a checkpoint that already holds more rows than the current live dataset, and warns if the episode count and row count diverge significantly — both are signs that something upstream didn't sync correctly.
+- 📥 **Load** — shows a list of saved checkpoints (episode count, row count, date). Selecting one clears the live folder first, then copies the checkpoint's `agent_state.json` + `dataset.csv` back into it, so training continues from exactly that point with dataset and agent always matched — never mixed with a leftover file from whatever was loaded before.
 
 ---
 
 ## 📊 Information Panels
 
-### 🔴 Live Tick
-Displays data for the **current step**:
+### 🔴 Trenutna aktivnost (Live Tick)
 - Last action
 - Last reward
-- Reason (MOVE / GOAL / COLLISION / MAX_STEPS)
+- Ishod — human-readable outcome (Parkiran / Sudar / Isteklo vrijeme / U toku), derived from the underlying `GOAL` / `COLLISION` / `MAX_STEPS` / `MOVE` reason codes
 - Episode number
 - Step number
 
-### 🟢 Learning
-Displays **overall learning statistics**:
+### 🟢 Učenje (Learning)
 - Episodes completed
 - Success rate
 - Current epsilon value
@@ -146,42 +118,28 @@ Displays **overall learning statistics**:
 
 ## 🧠 Learning Loop (Concept)
 
-
 The agent follows a classic RL loop:
 
+```
 Sense → Think → Act → Learn
+```
 
+1. **Sense** – observe the current environment state
+2. **Think** – choose an action (epsilon-greedy)
+3. **Act** – move in the environment (UP, DOWN, LEFT, RIGHT)
+4. **Learn** – update Q-values based on reward
 
-1. **Sense** – observe the current environment state  
-2. **Think** – choose an action (epsilon-greedy)  
-3. **Act** – move in the environment  
-4. **Learn** – update Q-values based on reward  
-
-This loop repeats continuously while the agent is running.
+An episode ends the instant the agent's move lands it on the target cell — the agent stays parked there, and the reward for reaching the goal is granted immediately (earlier versions required a second "return" step due to a reward-shaping issue; this has since been corrected).
 
 ---
 
 ## 🏗️ Architecture Overview
 
-The project follows a **clean, modular architecture**:
+- **UI (React + Vite)** — visualization only, no learning logic inside the frontend.
+- **Server (Node.js + TypeScript)** — controls execution (start/stop/reset), persists and loads agent state.
+- **Agent Packages** — reinforcement learning logic, environment rules, Q-Learning implementation.
 
-- **UI (React + Vite)**  
-  - Visualization only  
-  - No learning logic inside the frontend  
-
-- **Server (Node.js + TypeScript)**  
-  - Controls execution (start / stop / reset)  
-  - Persists and loads agent state  
-
-- **Agent Packages**  
-  - Reinforcement learning logic  
-  - Environment rules  
-  - Q-Learning implementation  
-
-This separation ensures:
-- clean responsibility boundaries,
-- easy extension and experimentation,
-- compliance with academic AI-agent architecture requirements.
+This separation keeps responsibility boundaries clean and makes the system easy to extend or experiment with.
 
 ---
 
@@ -190,289 +148,158 @@ This separation ensures:
 ```txt
 parking-agent/
 ├── apps/
-│   ├── server/                # Node.js + TS backend (kontrola/persistencija)
+│   ├── server/                # Node.js + TS backend (control/persistence)
 │   │   ├── analysis/          # analyze_report.py (ML) + zip_folder.py (checkpoint zip)
 │   │   └── data/
-│   │       ├── _live/         # radna sesija: agent_state.json + dataset.csv (+ report/)
-│   │       └── <N>_episodes/  # trajni checkpointi (napravi ih dugme Export)
-│   └── ui/                    # React + Vite UI (vizualizacija)
+│   │       ├── _live/         # working session: agent_state.json + dataset.csv (+ report/ once generated)
+│   │       ├── _tmp/          # zip staging + automatic Reset All backups
+│   │       └── <N>_episodes/  # permanent checkpoints (agent_state.json + dataset.csv only)
+│   └── ui/                    # React + Vite UI (visualization)
 │
-├── data/                      # stari referentni snapshotovi (van app-a, samo za uvid)
-├── packages/                  # Agent paketi
-│   ├── ai-agents-core/        # zajednički tipovi/utili (core)
-│   │   ├── dist/
-│   │   └── src/
-│   │
-│   └── parking-agent/         # RL agent + okruženje + Q-table + checkpoint logika
-│       ├── dist/
-│       │   ├── application/
-│       │   ├── domain/
-│       │   ├── infrastructure/
-│       │   ├── index.js
-│       │   └── index.d.ts
-│       │
+├── packages/
+│   ├── ai-agents-core/        # shared types/utilities (core)
+│   └── parking-agent/         # RL agent + environment + Q-table + checkpoint logic
 │       └── src/
 │           ├── application/
 │           ├── domain/
-│           ├── infrastructure/    # storage, DatasetLogger, checkpoints
-│           └── index.ts
+│           └── infrastructure/    # storage, DatasetLogger, checkpoints
 │
-├── docs/                      # dokumentacija (ovaj fajl)
+├── docs/                      # project documentation
 ├── package.json
 └── tsconfig.base.json
-
-
 ```
 
 ---
 
 ## 📦 State Persistence — checkpoints (json + csv together)
 
-Earlier versions kept the agent's Q-table (`.json`) and its ML dataset
-(`.csv`) as two independent files/exports. That let them drift out of sync:
-loading a `.json` didn't bring its matching `.csv` along, and `Reset All`
-could wipe the dataset with no way back. This is fixed by treating storage
-as **checkpoint folders**, not loose files.
+Storage is organized as **checkpoint folders**, not loose files, so the agent's Q-table and its dataset can never silently drift apart.
 
 **Where things live**, under `apps/server/data/`:
 
-- **`_live/`** — the working session. `Start`/`Stop`/`Reset Episode` update
-  it continuously (`agent_state.json` + `dataset.csv`, and `report/` once you
-  generate an ML report). This is what the server actually runs on.
-- **`<N>_episodes/`** — permanent checkpoints, one per `Export` click (`N` =
-  episode count at export time). Contains the exact same three things,
-  frozen. `Reset All` only clears `_live` — checkpoints are never touched.
+- **`_live/`** — the working session. `Start`/`Stop`/`Reset Episode` update it continuously (`agent_state.json` + `dataset.csv`). Once you click **"Generiši izvještaj"**, a `report/` folder appears here too — but only here, never in a checkpoint.
+- **`<N>_episodes/`** — permanent checkpoints, one per `Export` click. Contains just `agent_state.json` + `dataset.csv`, frozen at that episode count.
+- **`_tmp/`** — zip staging space, plus timestamped Reset All backups (`backup_<timestamp>/`, last 5 kept).
+
+**Why the report isn't stored in checkpoints:** the ML report is always generated against whatever dataset is currently active in `_live/`. Bundling a report into a checkpoint meant that loading an older checkpoint could bring along a report describing a completely different dataset — and there was no way to tell the two apart just by looking at the folder. The report is cheap to regenerate on demand, so checkpoints now hold only what actually needs to stay in sync: agent state and its dataset.
 
 **Flow:**
 
-- **Export** → copies `_live/` into `data/<N>_episodes/` (overwriting a
-  checkpoint at the same episode count) and offers a `.zip` download.
-- **Load** → pick a checkpoint from the list; its json+csv+report are copied
-  back into `_live/` and training continues from there — always as a
-  matched pair.
-- **Reset All** → clears only `_live/` (with a confirmation prompt); any
-  exported checkpoints remain on disk.
-- **`npm run train`** (headless) writes straight into `_live/` by default
-  and automatically creates a checkpoint when it finishes, so a training run
-  is never left only in the easily-cleared working folder.
-- **Upgrading from an older copy of this project**: if the server finds the
-  old flat `agent_state.json` + `dataset.csv` directly under `data/` (no
-  `_live/` yet), it moves them into `_live/` and checkpoints them on first
-  boot — automatically, once. Note this only *relocates* whatever CSV rows
-  already exist on disk; it can't recover episodes that a previous version
-  never wrote to `dataset.csv` in the first place.
-
-This allows:
-
-- continuing learning across sessions with dataset and agent always in sync,
-- keeping multiple named snapshots (e.g. 5 000 vs 30 000 episodes) side by
-  side to compare,
-- generating an ML report for a specific checkpoint's dataset with certainty
-  about which agent it describes.
+- **Export** → copies `_live/`'s `agent_state.json` + `dataset.csv` into `data/<N>_episodes/` and offers a `.zip` download. Refuses to overwrite a checkpoint that already has more data than the current live session.
+- **Load** → clears `_live/` first (dataset, state, and any old report), then copies the checkpoint's files in — training continues from there as a matched pair.
+- **Reset All** → takes an automatic backup, then clears only `_live/`; checkpoints are never touched.
+- **`npm run train`** (headless) writes straight into `_live/` and creates a checkpoint automatically when finished.
+- **Upgrading from an older copy**: if the server finds a legacy flat `agent_state.json` + `dataset.csv` directly under `data/` (no `_live/` yet), it moves them into `_live/` and checkpoints them on first boot, automatically, once.
 
 ---
 
 ## 📊 Dataset Generation (ML)
 
-Pored JSON snapshot-a (Q-tablica = "mozak" agenta), agent sada generiše i
-**CSV dataset** na kojem se mogu raditi klasični ML zadaci (deskriptivna
-statistika, korelacija, train/test split, klasifikacija, evaluacijske metrike).
+Alongside the JSON snapshot (Q-table = the agent's "brain"), the agent generates a **CSV dataset** for classic ML tasks (descriptive statistics, correlation, train/test split, classification, evaluation).
 
-- **Granularnost:** jedan red = jedna epizoda (jedan pokušaj parkiranja).
-- **Cilj (target):** `ParkingSuccess` (`Parked` / `NotParked`).
-- **Struktura:** miješani tipovi (numeričko / ordinalno 0–5 / kategorijsko),
-  jedan redundantan par kolona, kolone s nedostajućim vrijednostima i leaky
-  kolone — namjerno **analogno** datasetu *airline_passenger_satisfaction*.
-- Puni opis svih kolona: [`docs/data_dictionary.md`](docs/data_dictionary.md).
+- **Granularity:** one row = one episode (one parking attempt).
+- **Target:** `ParkingSuccess` (`Parked` / `NotParked`).
+- **Structure:** mixed types (numeric / ordinal 0–5 / categorical), one redundant column pair, columns with missing values, and leaky columns (deliberately included to practice recognizing and removing data leakage).
+- Full column reference: [`docs/data_dictionary.md`](docs/data_dictionary.md).
 
-### Kako se generiše
+### How it's generated
 
-Domain randomization: svaka epizoda dobije nasumičnu težinu mape
-(`randomizeDifficulty: true` u konfiguraciji servera/trenera), pa ishod realno
-ovisi o težini + vještini agenta.
+Domain randomization (`randomizeDifficulty: true`) gives every episode a random map difficulty, so the outcome genuinely depends on both difficulty and skill.
 
-**Opcija A — kroz UI/server (uživo):**
-- pokreni server i UI, klikni **Start**,
-- dataset se puni u `apps/server/data/_live/dataset.csv` (uvijek uz svoj
-  `agent_state.json` u istom folderu),
-- klik na **Export** pravi trajan checkpoint (`apps/server/data/<N>_episodes/`)
-  i odmah nudi ZIP za preuzimanje (json + csv + report zajedno).
+**Option A — through the UI/server (live):**
+- start the server and UI, click **Start**,
+- the dataset fills `apps/server/data/_live/dataset.csv` alongside `agent_state.json`,
+- **Export** freezes the current state as a checkpoint and offers a `.zip` download.
 
-**Opcija B — headless trener (brzo, preporučeno za veliki dataset):**
+**Option B — headless trainer (fast, recommended for large datasets):**
 
 ```bash
 cd apps/server
-npm run train            # 30 000 epizoda → apps/server/data/_live/
-                          # + automatski checkpoint apps/server/data/30000_episodes/
-npm run train -- 50000   # proizvoljan broj epizoda
-npm run train -- 30000 ./out   # proizvoljan folder (bez auto-checkpointa)
+npm run train                  # writes into apps/server/data/_live/ + auto-checkpoint
+npm run train -- 50000         # custom episode count
+npm run train -- 30000 ./out   # custom output folder (no auto-checkpoint)
 ```
 
-Trener ispiše i kratak profil; uz dataset snima i `agent_state.json` (Q-snapshot),
-a kad piše u podrazumijevanu lokaciju automatski napravi i checkpoint folder.
+### Example profile (~31,000 episodes)
 
-### Referentni profil (30 000 epizoda)
+Exact numbers vary between training runs; this is one reference point.
 
-| Metrika | RandomForest | LogisticRegression |
-|---|---|---|
-| Accuracy | ≈ 0.894 | ≈ 0.880 |
-| F1 | ≈ 0.917 | ≈ 0.906 |
-| AUC | ≈ 0.948 | ≈ 0.940 |
+| Metric | Random Forest | Logistic Regression | Gradient Boosting |
+|---|---|---|---|
+| Accuracy | ≈ 0.879 | ≈ 0.865 | ≈ 0.882 |
+| F1 | ≈ 0.902 | ≈ 0.892 | ≈ 0.904 |
+| AUC-ROC | ≈ 0.943 | ≈ 0.930 | ≈ 0.948 |
 
-Balans cilja ≈ 62% `Parked` / 38% `NotParked`. RandomForest blago nadmašuje
-LogisticRegression (nelinearna prednost).
+Target balance ≈ 60% `Parked` / 40% `NotParked`. Both tree ensembles outperform the linear model, with Gradient Boosting slightly ahead of Random Forest. A 5-fold cross-validation of all three models confirms these differences are consistent across folds (AUC standard deviation ≤ 0.005 for every model in this reference run) rather than an artifact of one particular train/test split.
 
-### Izvještaj na klik (u aplikaciji)
+### One-click report (in the app)
 
-Dugme **„Generiši izvještaj"** u UI-u pokreće kompletnu ML analizu nad AKTIVNIM
-(`_live/dataset.csv`) datasetom i odmah prikaže rezultate inline (tabela RF vs LR,
-ROC, feature importance, distribucija cilja), uz dugme za preuzimanje cijelog
-izvještaja kao ZIP (9 grafova + PROCESSED csv + Word izvještaj u IB250211
-formatu). Ako poslije toga klikneš **Export**, taj isti izvještaj se kopira
-zajedno sa json-om i csv-om u checkpoint folder — pa svaki checkpoint nosi i
-svoj tacan izvještaj.
+The **"Generiši izvještaj"** button runs a full ML analysis over the ACTIVE (`_live/dataset.csv`) dataset and displays results inline: a table comparing all three models, top features, and five charts (ROC comparison, metric comparison, feature importance, target distribution, and cross-validation results). A button next to it offers the complete report as a ZIP (12 charts + processed CSV + Word report).
 
-Backend za ovo poziva Python skriptu `apps/server/analysis/analyze_report.py`,
-pa na mašini koja vrti server trebaju biti instalirane biblioteke:
+The backend calls `apps/server/analysis/analyze_report.py`, so the machine running the server needs:
 
 ```bash
 pip install pandas scikit-learn matplotlib seaborn python-docx
 ```
 
-Server sam proba `python` pa `python3` (radi bez podešavanja i na Windowsu i
-na Linux/macOS-u); po potrebi se moze postaviti i `PYTHON_BIN` varijabla
-okruženja. Word korak je opcionalan — bez `python-docx` izvještaj se svejedno
-generiše (grafovi + csv), samo bez .docx.
+The server tries `python` then `python3` automatically; `PYTHON_BIN` can be set explicitly if needed. `python-docx` is optional — without it the report still generates (charts + CSV), just without the `.docx`.
 
-Radi tek kad ima dovoljno epizoda i obje klase (na početku su skoro sve kolizije;
-treba bar 500 epizoda u aktivnom `_live/dataset.csv`).
+The analysis requires enough data to be meaningful: at least 500 episodes in `_live/dataset.csv`, with at least 50 examples of each outcome class.
 
 ---
 
 ## 💡 Idea Discussion
 
-The initial idea was to build a system that demonstrates more than a simple
-input → output application.
+The initial idea was to build a system that demonstrates more than a simple input → output application. Alternatives considered included a static pathfinding algorithm, a rule-based parking assistant, and a supervised learning classifier — all rejected because they don't model behavior over time.
 
-Several alternatives were considered:
-- a static pathfinding algorithm,
-- a rule-based parking assistant,
-- a supervised learning classifier.
-
-These approaches were rejected because they do not model behavior over time.
-
-The final choice was a reinforcement learning agent that:
-- exists continuously in an environment,
-- acts iteratively through time,
-- learns from experience rather than fixed rules.
-
-This makes the system a true intelligent agent rather than an analytical tool.
+The final choice was a reinforcement learning agent that exists continuously in an environment, acts iteratively through time, and learns from experience rather than fixed rules.
 
 ---
 
 ## 🧠 Agent Type
 
-The Parking Agent is a combination of:
+The Parking Agent combines:
 
-- **Goal-oriented agent**  
-  The agent has a clearly defined goal: reaching the selected parking spot.
-
-- **Learning agent**  
-  The agent adapts its behavior over time using Q-Learning,
-  improving its policy based on experience and rewards.
-
-This combination was chosen because the task requires both
-goal optimization and adaptation through interaction with the environment.
+- **Goal-oriented agent** — has a clearly defined goal: reaching the selected parking spot.
+- **Learning agent** — adapts its behavior over time using Q-Learning, improving its policy based on experience and rewards.
 
 ---
 
 ## 🔁 Agent Cycle: Sense → Think → Act → Learn
 
-- **Sense**  
-  The agent observes the current world state:
-  grid size, obstacles, target position, and its own position.
-
-- **Think**  
-  Based on the current state, the agent selects an action using
-  an epsilon-greedy Q-learning policy.
-
-- **Act**  
-  The agent executes the selected action (UP, DOWN, LEFT, RIGHT)
-  which changes its position in the environment.
-
-- **Learn**  
-  After receiving a reward, the agent updates its Q-table,
-  improving future decisions based on experience.
+- **Sense** — observes grid size, obstacles, target position, and its own position.
+- **Think** — selects an action using an epsilon-greedy Q-learning policy.
+- **Act** — executes the action, changing its position.
+- **Learn** — updates its Q-table based on the reward received.
 
 ---
 
 ## 🔮 Possible Extensions
 
-Potential extensions considered for this project include:
-
-- allowing the user to select the target parking spot before learning starts,
-- storing the selected parking spot together with the learned state,
+- letting the user pick the target parking spot before learning starts,
+- storing the selected spot together with the learned state,
 - context-aware behavior depending on parking position,
-- multiple agents competing for parking spots.
-
-These ideas were discussed but not fully implemented
-due to project scope and time constraints.
-
----
-
-## 🤖 Use of LLMs
-
-Large Language Models (LLMs) were used as a thinking partner during the project.
-
-They were used for:
-- discussing and refining the initial agent idea,
-- comparing different types of agents,
-- evaluating whether the system qualifies as an intelligent agent,
-- reviewing architecture decisions and identifying improvements,
-- refining the UI and visualization quality.
-
-Multiple iterations were performed instead of accepting the first solution,
-allowing critical evaluation and gradual refinement of the design.
+- multiple agents competing for parking spots,
+- neural function approximation (DQN) for larger, continuous environments.
 
 ---
 
 ## 🎓 Educational Value
 
-This project demonstrates key concepts from Artificial Intelligence and Reinforcement Learning, including:
-
- - Reinforcement Learning fundamentals
-
- - Q-Learning algorithm in practice
-
- - Exploration vs. exploitation trade-offs
-
- - Reward-based decision making
-
- - Clean AI-agent architecture
-
- - Separation of concerns (UI, server, agent)
-
- - Real-time visualization of agent behavior and learning progress
+This project touches on: reinforcement learning fundamentals, the Q-learning algorithm in practice, exploration vs. exploitation, reward-based decision making, data leakage recognition, model comparison and cross-validation, clean agent architecture, and real-time visualization of learning progress.
 
 ---
 
 ## ⚠️ Disclaimer
 
- - This project is intended for educational and experimental purposes only.
-
- - It is not optimized for production use
-
- - Environment and parameters are simplified for learning clarity
-
- - Behavior may vary depending on configuration and randomness
+- Intended for educational and experimental purposes only.
+- Not optimized for production use.
+- Environment and parameters are simplified for learning clarity.
+- Behavior may vary depending on configuration and randomness.
 
 ---
 
 ## 🙏 Acknowledgements
 
- - Built as a university AI-agent project
-
- - Uses AI-assisted development tools (LLMs) for faster iteration and experimentation
-
- - Inspired by classic reinforcement learning environments and grid-based simulations
-
+- Built as a university AI-agent project.
+- Development was assisted by AI tools for iteration and refinement.

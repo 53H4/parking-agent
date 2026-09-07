@@ -301,5 +301,7 @@ This project touches on: reinforcement learning fundamentals, the Q-learning alg
 
 ## 🙏 Acknowledgements
 
-- Built as a university AI-agent project.
+- Developed as part of an undergraduate thesis (bachelor's degree in Software 
+  Engineering) at the Faculty of Information Technologies, University "Džemal 
+  Bijedić" of Mostar.
 - Development was assisted by AI tools for iteration and refinement.
